@@ -1,0 +1,123 @@
+{
+  "name": "E-mail Motivacional Diário com IA",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "f8bd91ca-f9f5-49cc-8d4d-2558a49852a7",
+      "name": "Agendamento 9h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Você é um coach motivacional brasileiro. Gere uma mensagem motivacional única e inspiradora para o dia de hoje. A mensagem deve:\n- Ter entre 3 e 5 parágrafos\n- Incluir uma citação famosa relacionada ao tema\n- Ser calorosa e encorajadora\n- Terminar com uma chamada para ação prática\n- Ser formatada em HTML simples (use <p>, <strong>, <em>)\n\nResponda APENAS com o conteúdo HTML da mensagem, sem tags html/body.",
+        "batching": {}
+      },
+      "id": "a0239d41-6a48-4041-9c4f-f3563556f54f",
+      "name": "Gerar Mensagem Motivacional",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        112,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "mode": "id",
+          "value": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "689290a5-a9f5-402a-a88b-ed5b7151035f",
+      "name": "OpenAI GPT-4o-mini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        112,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "=SEU_EMAIL@gmail.com",
+        "subject": "=✨ Sua mensagem motivacional de {{ $now.format('dd/MM/yyyy') }}",
+        "message": "=<html><body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;\"><div style=\"background-color: #ffffff; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);\"><h2 style=\"color: #4a4a8a; border-bottom: 2px solid #e0e0ff; padding-bottom: 12px;\">✨ Mensagem do Dia</h2>{{ $json.text }}<hr style=\"border: none; border-top: 1px solid #eee; margin: 24px 0;\"><p style=\"color: #999; font-size: 12px; text-align: center;\">Enviado automaticamente pelo seu assistente n8n com IA 🤖</p></div></body></html>",
+        "options": {}
+      },
+      "id": "9e1ab631-c6d3-4fe6-b9d4-a4198887ac8a",
+      "name": "Enviar pelo Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        368,
+        0
+      ],
+      "webhookId": "fad8c5ed-c365-44ee-a32c-0b0d2b6354cc"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Agendamento 9h": {
+      "main": [
+        [
+          {
+            "node": "Gerar Mensagem Motivacional",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Mensagem Motivacional": {
+      "main": [
+        [
+          {
+            "node": "Enviar pelo Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT-4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gerar Mensagem Motivacional",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "8b5e9c40-a318-4c6c-9499-7165951d2557",
+  "meta": {
+    "instanceId": "4ff9e4a4b9b5791f575a71e47469d50c55acb022f6bdd9789fb388f5899aefd1"
+  },
+  "id": "Y3JmxK81hewAq3OQ",
+  "tags": []
+}
